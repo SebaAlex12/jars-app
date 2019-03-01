@@ -3,6 +3,7 @@ import {
   GET_JAR,
   GET_JARS,
   JAR_LOADING,
+  ADD_JAR_OPERATION,
   GET_ERRORS
 } from "../actions/types";
 
@@ -35,6 +36,14 @@ export default function(state = initialState, action) {
       return {
         ...state,
         jars: [action.payload, ...state.jars]
+      };
+    case ADD_JAR_OPERATION:
+      return {
+        ...state,
+        jars: [
+          action.payload,
+          ...state.jars.filter(jar => jar._id !== action.payload._id)
+        ]
       };
     default:
       return state;

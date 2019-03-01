@@ -51,14 +51,12 @@ class JarForm extends Component {
     const { errors } = this.state;
     const currency = [
       { label: "Wybierz walutę", value: "" },
-      { label: "Polska", value: "pl" },
-      { label: "Niemiecka", value: "de" },
-      { label: "Francuska", value: "fr" },
-      { label: "Włoska", value: "it" },
-      { label: "Angielska", value: "en" },
-      { label: "Hiszpańska", value: "es" },
-      { label: "Rosyjska", value: "ru" },
-      { label: "Szwecka", value: "se" }
+      { label: "PLN", value: "PLN" },
+      { label: "EUR", value: "EUR" },
+      { label: "USD", value: "USD" },
+      { label: "CHF", value: "CHF" },
+      { label: "GBP", value: "GBP" },
+      { label: "JPY", value: "JPY" }
     ];
     const typeOfJar = [
       { label: "Wybierz rodzaj konta", value: "" },

@@ -8,21 +8,21 @@ const JarSchema = new Schema({
   balance: { type: Number, default: 0 },
   currency: { type: String, default: "pl" },
   createDate: {
-    type: Date,
-    default: Date.now
+    type: Date
+    // default: Date.now
   },
   splitIfEmpty: { type: Number },
   takeAllIfEmpty: { type: Number },
   history: [
     {
       typeOfOperation: { type: String, required: true },
-      jarId: { type: Number },
-      createDate: {
-        type: Date,
-        default: Date.now
-      },
+      recipientId: { type: Number },
       amount: { type: Number, required: true },
-      description: { type: String }
+      description: { type: String },
+      createDate: {
+        type: Date
+        // default: Date.now
+      }
     }
   ]
 });
