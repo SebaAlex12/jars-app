@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import JarForm from "./JarForm";
-// import JarFeed from "./JarFeed";
+import JarFeed from "./JarFeed";
 import Spinner from "../common/spinner";
 import { getJars } from "../../actions/jarActions";
 
@@ -21,15 +21,17 @@ class Jars extends Component {
   }
 
   render() {
-    // const { jars, loading } = this.props.jar;
+    const { jars, loading } = this.props.jar;
 
     let jarContent;
 
-    // if (jars === null || loading || jars.length === 0) {
-    //   jarContent = <Spinner />;
-    // } else {
-    //      jarContent = <JarFeed jars={jars} />;
-    // }
+    if (jars === null || loading || jars.length === 0) {
+      // console.log(jars);
+      jarContent = <Spinner />;
+    } else {
+      // console.log(jars);
+      jarContent = <JarFeed jars={jars} />;
+    }
     return (
       <div className="feed jars-box">
         <div className="container">
@@ -47,7 +49,7 @@ class Jars extends Component {
                 dodaj słoik
               </button>
               {this.state.showJarForm ? <JarForm /> : null}
-              {/* {jarContent} */}
+              {jarContent}
             </div>
           </div>
         </div>
@@ -57,7 +59,6 @@ class Jars extends Component {
 }
 
 Jars.propTypes = {
-  Jar: PropTypes.object.isRequired,
   getJars: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired
 };

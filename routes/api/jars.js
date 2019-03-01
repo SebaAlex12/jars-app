@@ -29,11 +29,15 @@ router.post(
     //   if (!isValid) {
     //     return res.status(400).json(errors);
     //   }
-    // console.log(req.body);
+    console.log(req.body);
+
     const newJar = new Jar({
-      currency: req.body.currency
+      name: req.body.name,
+      typeOfJar: req.body.typeOfJar,
+      currency: req.body.currency === "" ? "pl" : req.body.currency
     });
-    console.log(newJar);
+
+    // console.log(newJar);
     newJar.save().then(jar => res.json(jar));
   }
 );

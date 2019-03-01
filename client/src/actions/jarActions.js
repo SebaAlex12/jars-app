@@ -1,14 +1,6 @@
 import axios from "axios";
 
-import {
-  ADD_JAR,
-  GET_JAR,
-  GET_JARS,
-  UPDATE_JAR,
-  DELETE_JAR,
-  JAR_LOADING,
-  GET_ERRORS
-} from "./types";
+import { ADD_JAR, GET_JAR, GET_JARS, JAR_LOADING, GET_ERRORS } from "./types";
 
 export const addJar = jarData => dispatch => {
   axios

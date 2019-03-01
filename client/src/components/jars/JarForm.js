@@ -9,6 +9,10 @@ class JarForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      name: "",
+      typeOfJar: "",
+      currency: "",
+      showCurrencySelect: false,
       errors: {}
     };
     this.onChange = this.onChange.bind(this);
@@ -17,7 +21,12 @@ class JarForm extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    const newJar = { currency: this.state.currency };
+    // console.log(this.state);
+    const newJar = {
+      name: this.state.name,
+      typeOfJar: this.state.typeOfJar,
+      currency: this.state.currency
+    };
     this.props.addJar(newJar);
   }
 
@@ -25,9 +34,23 @@ class JarForm extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
+  onChangeTypeOfJar(e) {
+    this.setState({ [e.target.name]: e.target.value });
+    if (e.target.value === "Walutowe") {
+      this.setState({
+        showCurrencySelect: true
+      });
+    } else {
+      this.setState({
+        showCurrencySelect: false
+      });
+    }
+  }
+
   render() {
     const { errors } = this.state;
-    const options = [
+    const currency = [
+      { label: "Wybierz walutę", value: "" },
       { label: "Polska", value: "pl" },
       { label: "Niemiecka", value: "de" },
       { label: "Francuska", value: "fr" },
@@ -37,6 +60,11 @@ class JarForm extends Component {
       { label: "Rosyjska", value: "ru" },
       { label: "Szwecka", value: "se" }
     ];
+    const typeOfJar = [
+      { label: "Wybierz rodzaj konta", value: "" },
+      { label: "Podstawowe", value: "Podstawowe" },
+      { label: "Walutowe", value: "Walutowe" }
+    ];
 
     return (
       <div className="post-form mb-3">
@@ -45,19 +73,36 @@ class JarForm extends Component {
           <div className="card-body">
             <form onSubmit={this.onSubmit}>
               <div className="row">
-                <label htmlFor="currency">Waluta:</label>
-                <SelectListGroup
-                  placeholder="Waluta"
-                  name="currency"
-                  value={this.state.currency}
+                <TextFieldGroup
+                  placeholder="Podaj nazwę"
+                  name="name"
+                  value={this.state.name}
                   onChange={this.onChange}
-                  options={options}
-                  error={errors.currency}
+                  error={errors.name}
                 />
+                <SelectListGroup
+                  name="typeOfJar"
+                  value={this.state.typeOfJar}
+                  onChange={this.onChangeTypeOfJar.bind(this)}
+                  options={typeOfJar}
+                  error={errors.typeOfJar}
+                />
+                {this.state.showCurrencySelect ? (
+                  <SelectListGroup
+                    name="currency"
+                    value={this.state.currency}
+                    onChange={this.onChange}
+                    options={currency}
+                    error={errors.currency}
+                  />
+                ) : null}
+
+                <div className="form-group ml-2 mt-1">
+                  <button type="submit" className="btn btn-dark float-right">
+                    Dodaj
+                  </button>
+                </div>
               </div>
-              <button type="submit" className="btn btn-dark float-right">
-                Dodaj
-              </button>
             </form>
           </div>
         </div>
