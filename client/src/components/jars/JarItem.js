@@ -17,16 +17,10 @@ class JarItem extends Component {
   }
   render() {
     const { jar } = this.props;
-
+    console.log(jar);
     return (
       <div className="jar-item-box row mb-2">
         <div className="jar-item-info col-lg-4 col-md-4">
-          <h2>
-            Słoik{" "}
-            <span>
-              <Moment format="YYYY-MM-DD HH:mm">{jar.date}</Moment>
-            </span>
-          </h2>
           <ul className="list-group">
             <li className="list-group-item">
               <button
@@ -45,7 +39,10 @@ class JarItem extends Component {
               <div className="title float-left mr-2 font-weight-bold">
                 Rodzaj:
               </div>
-              <div className="value">{jar.typeOfJar}</div>
+              <div className="value">
+                {jar.typeOfJar}{" "}
+                {jar.recipientId ? `od: ${jar.recipientId}` : null}
+              </div>
             </li>
             <li className="list-group-item">
               <div className="title float-left mr-2 font-weight-bold">
@@ -63,7 +60,7 @@ class JarItem extends Component {
               <div className="title float-left mr-2 font-weight-bold">
                 Data założenia:
               </div>
-              <Moment format="YYYY-MM-DD HH:mm">{jar.date}</Moment>
+              <Moment format="YYYY-MM-DD HH:mm">{jar.createDate}</Moment>
             </li>
           </ul>
         </div>

@@ -1,21 +1,26 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+
 import TextFieldGroup from "../common/TextFieldGroup";
 import SelectListGroup from "../common/SelectListGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
 import { addJarOperation } from "../../actions/jarActions";
+import { getJar, updateJar } from "../../actions/jarActions";
+import isEmpty from "../../validation/is-empty";
+import { JAR_LOADING } from "../../actions/types";
 
 class JarOperationForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
       jarId: props.jarId,
-      recipientId: "",
+      recipientId: null,
       typeOfOperation: "",
       amount: "",
       description: "",
       showJarsSelect: false,
+      jar: {},
       errors: {}
     };
     this.onChange = this.onChange.bind(this);
@@ -27,20 +32,70 @@ class JarOperationForm extends Component {
 
   onSubmitOperationForm(e) {
     e.preventDefault();
-    // console.log(this.state);
-    const data = {
-      jarId: this.state.jarId,
-      recipientId:
-        this.state.recipientId &&
-        this.state.typeOfOperation === "Przelew wychodzący"
-          ? this.state.recipientId
-          : null,
+
+    let recipientJar = [];
+    let currentJar = [];
+
+    this.props.jars.map(jar => {
+      if (jar._id === this.state.jarId) {
+        return (currentJar = {
+          id: jar._id,
+          name: jar.name,
+          currency: jar.currency
+        });
+      }
+    });
+
+    if (this.state.recipientId) {
+      this.props.jars.map(jar => {
+        if (jar._id === this.state.recipientId) {
+          return (recipientJar = {
+            id: jar._id,
+            name: jar.name,
+            currency: jar.currency
+          });
+        }
+      });
+    }
+
+    if (recipientJar) {
+      console.log(recipientJar);
+    }
+
+    //  check if currency of jars are the same
+    if (this.state.recipientId) {
+      console.log(recipientJar);
+      if (currentJar.currency !== recipientJar.currency) {
+        return;
+      }
+    }
+
+    const currentJarData = {
+      jarId: currentJar.id ? currentJar.id : null,
+      jarName: recipientJar.name ? recipientJar.name : null,
+      recipientId: recipientJar.id ? recipientJar.id : null,
+      recipientName: recipientJar.name ? recipientJar.name : null,
       typeOfOperation: this.state.typeOfOperation,
       amount: this.state.amount,
-      description: this.state.description
+      description: this.state.description,
+      date: Date.now()
     };
 
-    this.props.addJarOperation(data);
+    this.props.updateJar(currentJarData);
+
+    if (recipientJar) {
+      const recipientJarData = {
+        jarId: recipientJar.id,
+        recipientId: currentJar.id ? currentJar.id : null,
+        recipientName: currentJar.name ? currentJar.name : null,
+        typeOfOperation: "Przelew przychodzący",
+        amount: this.state.amount,
+        description: this.state.description,
+        date: Date.now()
+      };
+
+      this.props.updateJar(recipientJarData);
+    }
   }
 
   onChangetypeOfOperation(e) {
@@ -52,7 +107,8 @@ class JarOperationForm extends Component {
       });
     } else {
       this.setState({
-        showJarsSelect: false
+        showJarsSelect: false,
+        recipientId: null
       });
     }
   }
@@ -131,8 +187,9 @@ class JarOperationForm extends Component {
 
 JarOperationForm.propTypes = {
   addJarOperation: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  updateJar: PropTypes.func.isRequired,
+  getJar: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
 };
 const mapStateToProps = state => ({
   jars: state.jar.jars,
@@ -142,5 +199,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { addJarOperation }
+  { addJarOperation, getJar, updateJar }
 )(JarOperationForm);

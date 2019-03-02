@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import JarForm from "./JarForm";
-import JarFeed from "./JarFeed";
+// import JarFeed from "./JarFeed";
+import JarItem from "./JarItem";
 import Spinner from "../common/spinner";
 import { getJars } from "../../actions/jarActions";
 
@@ -30,7 +31,8 @@ class Jars extends Component {
       jarContent = <Spinner />;
     } else {
       // console.log(jars);
-      jarContent = <JarFeed jars={jars} />;
+      // jarContent = <JarFeed key={jar._id} jars={jars} />;
+      jarContent = jars.map(jar => <JarItem key={jar._id} jar={jar} />);
     }
     return (
       <div className="feed jars-box">

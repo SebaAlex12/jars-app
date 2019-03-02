@@ -1,7 +1,9 @@
 import {
   ADD_JAR,
   GET_JAR,
+  DELETE_JAR,
   GET_JARS,
+  UPDATE_JAR,
   JAR_LOADING,
   ADD_JAR_OPERATION,
   GET_ERRORS
@@ -35,7 +37,17 @@ export default function(state = initialState, action) {
     case ADD_JAR:
       return {
         ...state,
-        jars: [action.payload, ...state.jars]
+        jars: [action.payload, ...state.jars],
+        loading: false
+      };
+    case UPDATE_JAR:
+      return {
+        ...state,
+        jars: [
+          action.payload,
+          ...state.jars.filter(jar => jar._id !== action.payload._id)
+        ],
+        loading: false
       };
     case ADD_JAR_OPERATION:
       return {
@@ -43,7 +55,15 @@ export default function(state = initialState, action) {
         jars: [
           action.payload,
           ...state.jars.filter(jar => jar._id !== action.payload._id)
-        ]
+        ],
+        loading: false
+      };
+    case DELETE_JAR:
+      return {
+        ...state,
+        jar: action.payload,
+        jars: state.jars.filter(jar => jar._id != action.payload),
+        loading: false
       };
     default:
       return state;

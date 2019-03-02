@@ -17,6 +17,20 @@ router.get("/", (req, res) => {
     .catch(err => res.status(404).json({ nojarsfound: `No jars found` }));
 });
 
+// @route GET api/jars/current/:id
+// @desc get jar by id
+// @access Public
+router.get(
+  "/current/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    // console.log(req.params.id);
+    Jar.findById(req.params.id)
+      .then(jars => res.json(jars))
+      .catch(err => res.status(404).json({ nojarfound: `Jar not found` }));
+  }
+);
+
 // @route POST api/jars
 // @desc create jar
 // @access Private
@@ -29,12 +43,12 @@ router.post(
     //   if (!isValid) {
     //     return res.status(400).json(errors);
     //   }
-    console.log(req.body);
+    // console.log(req.body);
 
     const newJar = new Jar({
       name: req.body.name,
       typeOfJar: req.body.typeOfJar,
-      currency: req.body.currency ? req.body.currency : "pl"
+      currency: req.body.currency ? req.body.currency : "PLN"
     });
 
     // console.log(newJar);
@@ -62,6 +76,11 @@ router.post(
       date: Date.now()
     };
 
+    // if send money from jar to jar
+    if (req.body.recipientId) {
+      newOperationHistory.push(req.body.recipientId);
+    }
+
     Jar.findById(req.params.id)
       .then(jar => {
         // count balance of jar depends on type of operation
@@ -75,11 +94,11 @@ router.post(
         ) {
           balance = jar.balance - req.body.amount;
         }
-
+        // parseInt(balance);
         //  check if you have enought money in jar
-
         if (balance < 0) {
-          return;
+          console.log(balance);
+          return res.status(404).json({ jarnotfound: "jar dont have money" });
         }
 
         jar.balance = balance;
@@ -91,7 +110,7 @@ router.post(
     // check if send money to different jar
     if (req.body.recipientId) {
       //  get balance of recipent jar
-      console.log(req.body.recipientId);
+      // console.log(req.body);
       Jar.findById(req.body.recipientId)
         .then(recipientJar => {
           balance = eval(recipientJar.balance) + eval(req.body.amount);
@@ -106,6 +125,63 @@ router.post(
   }
 );
 
+// @route POST api/jars/update/:id
+// @desc Add update to jar
+// @access Private
+router.post(
+  "/update/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    // const { errors, isValid } = validateJarInput(req.body);
+
+    // if (!isValid) {
+    //   return res.status(400).json(errors);
+    // }
+
+    let balance = 0;
+    let newOperationHistory = {
+      recipientId: req.body.recipientId,
+      recipientName: req.body.recipientName,
+      typeOfOperation: req.body.typeOfOperation,
+      amount: req.body.amount,
+      description: req.body.description,
+      date: req.body.date
+    };
+
+    Jar.findById(req.params.id)
+      .then(jar => {
+        // count balance of jar depends on type of operation
+        if (
+          req.body.typeOfOperation === "Wpłata" ||
+          req.body.typeOfOperation === "Przelew przychodzący"
+        ) {
+          balance = eval(jar.balance) + eval(req.body.amount);
+        }
+
+        if (
+          req.body.typeOfOperation === "Wypłata" ||
+          req.body.typeOfOperation === "Przelew wychodzący"
+        ) {
+          balance = eval(jar.balance) - eval(req.body.amount);
+        }
+
+        //  check if you have enought money in jar
+        if (balance < 0) {
+          // console.log(balance);
+          return res
+            .status(404)
+            .json({ jarnotfound: "jar dont have enought money" });
+        }
+
+        jar.balance = balance;
+        jar.history.unshift(newOperationHistory);
+        // console.log(jar);
+        jar.save().then(jar => res.json(jar));
+      })
+      .catch(err => res.status(404).json({ jarnotfound: "jar not found" }));
+  }
+);
+
 // @route DELETE api/jars/delete/:id
 // @desc delete jar id
 // @access Private
@@ -113,10 +189,9 @@ router.delete(
   "/delete/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    console.log("delete");
     Jar.findById(req.params.id)
       .then(jar => {
-        jar.remove().then(() => res.json({ success: true }));
+        jar.remove().then(() => res.json(jar));
       })
       .catch(err => res.status(404).json({ postnotfound: "No jar found" }));
   }

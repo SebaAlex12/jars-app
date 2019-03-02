@@ -4,6 +4,7 @@ import {
   ADD_JAR,
   GET_JAR,
   DELETE_JAR,
+  UPDATE_JAR,
   GET_JARS,
   ADD_JAR_OPERATION,
   JAR_LOADING,
@@ -16,6 +17,23 @@ export const addJar = jarData => dispatch => {
     .then(res =>
       dispatch({
         type: ADD_JAR,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const getJar = id => dispatch => {
+  axios
+    .get(`/api/jars/current/${id}`)
+    .then(res =>
+      dispatch({
+        type: GET_JAR,
         payload: res.data
       })
     )
@@ -44,6 +62,18 @@ export const getJars = () => dispatch => {
     );
 };
 
+export const updateJar = data => dispatch => {
+  axios
+    .post(`/api/jars/update/${data.jarId}`, data)
+    .then(res =>
+      dispatch({
+        type: UPDATE_JAR,
+        payload: res.data
+      })
+    )
+    .catch(err => console.log(err));
+};
+
 export const addJarOperation = data => dispatch => {
   axios
     .post(`/api/jars/operation/${data.jarId}`, data)
@@ -69,8 +99,8 @@ export const deleteJar = id => dispatch => {
     )
     .catch(err =>
       dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
+        type: GET_JARS,
+        payload: null
       })
     );
 };
