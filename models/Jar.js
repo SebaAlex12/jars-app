@@ -18,6 +18,7 @@ const JarSchema = new Schema({
       typeOfOperation: { type: String, required: true },
       recipientId: { type: String },
       recipientName: { type: String },
+      balanceBefore: { type: Number },
       amount: { type: Number, required: true },
       description: { type: String },
       createDate: {

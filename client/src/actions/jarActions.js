@@ -7,7 +7,6 @@ import {
   UPDATE_JAR,
   GET_JARS,
   ADD_JAR_OPERATION,
-  JAR_LOADING,
   GET_ERRORS
 } from "./types";
 

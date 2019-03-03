@@ -5,8 +5,7 @@ import {
   GET_JARS,
   UPDATE_JAR,
   JAR_LOADING,
-  ADD_JAR_OPERATION,
-  GET_ERRORS
+  ADD_JAR_OPERATION
 } from "../actions/types";
 
 const initialState = {
@@ -62,7 +61,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         jar: action.payload,
-        jars: state.jars.filter(jar => jar._id != action.payload),
+        jars: state.jars.filter(jar => jar._id !== action.payload),
         loading: false
       };
     default:

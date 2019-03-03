@@ -173,6 +173,7 @@ router.post(
             .json({ jarnotfound: "jar dont have enought money" });
         }
 
+        newOperationHistory.balanceBefore = jar.balance;
         jar.balance = balance;
         jar.history.unshift(newOperationHistory);
         // console.log(jar);

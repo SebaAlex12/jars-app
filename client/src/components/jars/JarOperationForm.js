@@ -7,8 +7,6 @@ import SelectListGroup from "../common/SelectListGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
 import { addJarOperation } from "../../actions/jarActions";
 import { getJar, updateJar } from "../../actions/jarActions";
-import isEmpty from "../../validation/is-empty";
-import { JAR_LOADING } from "../../actions/types";
 
 class JarOperationForm extends Component {
   constructor(props) {
@@ -58,13 +56,13 @@ class JarOperationForm extends Component {
       });
     }
 
-    if (recipientJar) {
-      console.log(recipientJar);
-    }
+    // if (recipientJar) {
+    //   console.log(recipientJar);
+    // }
 
     //  check if currency of jars are the same
     if (this.state.recipientId) {
-      console.log(recipientJar);
+      // console.log(recipientJar);
       if (currentJar.currency !== recipientJar.currency) {
         return;
       }
@@ -83,7 +81,7 @@ class JarOperationForm extends Component {
 
     this.props.updateJar(currentJarData);
 
-    if (recipientJar) {
+    if (this.state.recipientId) {
       const recipientJarData = {
         jarId: recipientJar.id,
         recipientId: currentJar.id ? currentJar.id : null,
@@ -127,11 +125,13 @@ class JarOperationForm extends Component {
     // get every jars except present state one
     const { jars } = this.props;
     const recipients = [{ label: "Wybierz słoik", value: "" }];
-    const clearJars = jars.filter(jar => jar._id != this.state.jarId);
+    const clearJars = jars.filter(jar => jar._id !== this.state.jarId);
     clearJars.map(jar => {
       let obj = { label: jar.name, value: jar._id };
       recipients.push(obj);
     });
+
+    // console.log(this.state.recipientId);
 
     return (
       <div className="jar-operation-form-box mt-5 col-lg-8 col-md-8">
